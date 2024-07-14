@@ -8,11 +8,14 @@ function ChatBot() {
   const [aberto, setAberto] = useState(false)
   const [digitando, setDigitando] = useState({usuario: false, bot: false})
   const fimDoHistoricoRef = useRef(null)
+  
+  const  apiUrl = 'http://10.0.0.108:5000/dialogflow'
 
   const enviarMensagem = async () => {
+   
     setDigitando({...digitando, usuario: true})
     try {
-      const resposta = await axios.post('http://10.0.0.108:5000/dialogflow', {
+      const resposta = await axios.post(apiUrl, {
         mensagem,
       })
       setDigitando({...digitando, usuario: false, bot: true})
