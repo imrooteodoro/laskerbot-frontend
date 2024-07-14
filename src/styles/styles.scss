@@ -88,3 +88,20 @@ button {
   background-color: black;
   color: white;
 }
+
+/* Animação digitando*/
+@keyframes digitando {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.digitando {
+  animation: digitando 1s steps(5, end) infinite;
+}
