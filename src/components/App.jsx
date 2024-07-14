@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import axios from 'axios'
 import '../assets/laskerbot.png'
 
@@ -6,12 +6,16 @@ function ChatBot() {
   const [mensagem, setMensagem] = useState('')
   const [historicoDeMensagens, setHistoricoDeMensagens] = useState([])
   const [aberto, setAberto] = useState(false)
+  const [digitando, setDigitando] = useState({usuario: false, bot: false})
+  const fimDoHistoricoRef = useRef(null)
 
   const enviarMensagem = async () => {
+    setDigitando({...digitando, usuario: true})
     try {
       const resposta = await axios.post('http://10.0.0.108:5000/dialogflow', {
         mensagem,
       })
+      setDigitando({...digitando, usuario: false, bot: true})
       const respostaFormatada = resposta.data.resposta_do_bot.replace(
         /\\n/g,
         '<br/>',
@@ -22,10 +26,15 @@ function ChatBot() {
         {tipo: 'bot', texto: respostaFormatada},
       ])
       setMensagem('')
+      setDigitando({...digitando, bot: false})
     } catch (erro) {
       console.error(erro)
     }
   }
+
+  useEffect(() => {
+    fimDoHistoricoRef.current?.scrollIntoView({behavior: 'smooth'})
+  }, [historicoDeMensagens])
 
   return (
     <div>
@@ -40,6 +49,17 @@ function ChatBot() {
                 <p dangerouslySetInnerHTML={{__html: msg.texto}}></p>
               </div>
             ))}
+            {digitando.usuario && (
+              <div className="mensagem usuario">
+                <span className="digitando">...</span>
+              </div>
+            )}
+            {digitando.bot && (
+              <div className="mensagem bot">
+                <span className="digitando">...</span>
+              </div>
+            )}
+            <div ref={fimDoHistoricoRef} />
           </div>
           <input
             type="text"
